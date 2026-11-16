@@ -1,0 +1,324 @@
+
+/* 全站基本設定 */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Microsoft JhengHei", "Noto Sans TC",
+                 Arial, sans-serif;
+    background-color: #f4f7fb;
+    color: #243247;
+    line-height: 1.6;
+}
+
+/* 頁首 */
+header {
+    position: relative;
+    background-color: #ffffff;
+    padding: 24px 6%;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+header h1 {
+    margin: 0;
+    color: #1769aa;
+    font-size: 26px;
+}
+
+header p {
+    margin: 4px 0 0;
+    color: #64748b;
+}
+
+/* 中英文切換 */
+#languageBtn {
+    position: absolute;
+    top: 28px;
+    right: 6%;
+    background: #ffffff;
+    color: #1769aa;
+    border: 1px solid #1769aa;
+    padding: 9px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+#languageBtn:hover {
+    background-color: #eaf4fc;
+}
+
+/* 主要內容 */
+main {
+    width: 90%;
+    max-width: 1200px;
+    margin: 30px auto;
+}
+
+section {
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.03);
+}
+
+section h2 {
+    margin: 0 0 20px;
+    font-size: 20px;
+    color: #1769aa;
+}
+
+/* 篩選表單 */
+#filterForm {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+label {
+    font-weight: 600;
+}
+
+input,
+select {
+    padding: 10px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 15px;
+    background: white;
+    min-width: 110px;
+}
+
+input:focus,
+select:focus {
+    outline: 2px solid #93c5fd;
+    border-color: #1769aa;
+}
+
+/* 查詢按鈕 */
+#filterForm button {
+    padding: 11px 20px;
+    background-color: #1769aa;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+#filterForm button:hover {
+    background-color: #125589;
+}
+
+/* 查詢筆數 */
+#resultCount {
+    color: #64748b;
+    font-size: 14px;
+}
+
+/* 病人清單表格 */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead {
+    background-color: #edf5fc;
+}
+
+th,
+td {
+    padding: 14px 12px;
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+th {
+    color: #334155;
+    font-weight: 600;
+}
+
+tbody tr:hover {
+    background-color: #f8fbff;
+}
+
+/* 病人詳細資料連結 */
+td a {
+    color: #1769aa;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+td a:hover {
+    text-decoration: underline;
+}
+
+/* 手機與小螢幕 */
+@media (max-width: 768px) {
+    header {
+        padding: 20px;
+    }
+
+    header h1 {
+        font-size: 20px;
+        padding-right: 85px;
+    }
+
+    #languageBtn {
+        right: 20px;
+        top: 20px;
+    }
+
+    main {
+        width: 95%;
+        margin: 18px auto;
+    }
+
+    section {
+        padding: 16px;
+        overflow-x: auto;
+    }
+
+    #filterForm {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    input,
+    select,
+    #filterForm button {
+        width: 100%;
+    }
+
+    table {
+        min-width: 550px;
+    }
+}
+
+/* 病人詳細資料 */
+#backLink {
+    color: #1769aa;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+#backLink:hover {
+    text-decoration: underline;
+}
+
+.patient-info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 12px;
+    background: #f8fafc;
+    border-radius: 8px;
+    overflow-wrap: anywhere;
+}
+
+.info-item strong {
+    color: #64748b;
+    font-size: 13px;
+}
+
+.encounter-card {
+    margin: 0 0 18px;
+    padding: 18px 20px;
+    border-left: 4px solid #1769aa;
+    background: #f8fafc;
+    border-radius: 0 10px 10px 0;
+}
+
+.encounter-card h3 {
+    margin: 0 0 10px;
+    color: #1769aa;
+}
+
+.encounter-card p {
+    margin: 6px 0;
+}
+
+.encounter-card ul {
+    margin-bottom: 0;
+    padding-left: 22px;
+}
+
+@media (max-width: 600px) {
+    .patient-info-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* B2：病人性別統計圖表 */
+.chart-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.chart-row {
+    display: grid;
+    grid-template-columns: 65px minmax(0, 1fr) 120px;
+    align-items: center;
+    gap: 16px;
+}
+
+.chart-track {
+    height: 24px;
+    background-color: #e8eef5;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.chart-bar {
+    height: 100%;
+    width: 0;
+    border-radius: 8px;
+    transition: width 0.3s ease;
+}
+
+.male-bar {
+    background-color: #2879bd;
+}
+
+.female-bar {
+    background-color: #e58ca7;
+}
+
+#maleCount,
+#femaleCount {
+    font-size: 14px;
+    color: #475569;
+    text-align: right;
+}
+
+@media (max-width: 600px) {
+    .chart-row {
+        grid-template-columns: 48px minmax(0, 1fr) 95px;
+        gap: 8px;
+    }
+}
+/* B3：檢驗與用藥資料表 */
+.table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.table-wrapper table {
+    min-width: 600px;
+}
+
+.table-wrapper td {
+    overflow-wrap: anywhere;
+}

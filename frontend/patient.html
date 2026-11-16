@@ -1,0 +1,102 @@
+
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>病人詳細資料 | Synthetic Patient Explorer</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <header>
+        <h1 data-i18n="detailTitle">病人詳細資料</h1>
+        <p>Synthetic Patient Explorer</p>
+
+        <button id="languageBtn" type="button">
+            English
+        </button>
+    </header>
+
+    <main>
+        <section>
+            <a href="index.html" id="backLink"
+               data-i18n="back">
+                ← 返回病人清單
+            </a>
+        </section>
+
+        <section>
+            <h2 data-i18n="basicInfo">基本資料</h2>
+
+            <div id="patientInfo">
+                正在載入病人資料...
+            </div>
+        </section>
+
+        <section>
+            <h2 data-i18n="encounterHistory">
+                就診時間軸
+            </h2>
+
+            <p id="encounterCount"></p>
+
+            <div id="encounterTimeline">
+                正在載入就診紀錄...
+            </div>
+        </section>
+
+        <section>
+            <h2 data-i18n="observations">
+                檢驗與觀察紀錄
+            </h2>
+
+            <p id="observationCount"></p>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th data-i18n="date">日期</th>
+                            <th data-i18n="description">描述</th>
+                            <th data-i18n="value">數值</th>
+                            <th data-i18n="units">單位</th>
+                        </tr>
+                    </thead>
+                    <tbody id="observationTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section>
+            <h2 data-i18n="medications">
+                用藥紀錄
+            </h2>
+
+            <p id="medicationCount"></p>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th data-i18n="startDate">開始日期</th>
+                            <th data-i18n="stopDate">結束日期</th>
+                            <th data-i18n="description">描述</th>
+                            <th data-i18n="dispenses">處方數</th>
+                        </tr>
+                    </thead>
+                    <tbody id="medicationTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+    
+
+    <script src="patient.js"></script>
+</body>
+</html>

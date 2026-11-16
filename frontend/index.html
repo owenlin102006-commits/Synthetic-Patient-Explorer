@@ -1,0 +1,154 @@
+
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Synthetic Patient Explorer</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <header>
+        <h1 data-i18n="title">合成病人資料查詢系統</h1>
+        <p data-i18n="subtitle">Synthetic Patient Explorer</p>
+
+        <button id="languageBtn" type="button">
+            English
+        </button>
+    </header>
+
+    <main>
+        <section>
+            <h2 data-i18n="filters">病人篩選</h2>
+
+            <form id="filterForm">
+                <label for="gender" data-i18n="gender">
+                    性別
+                </label>
+
+                <select id="gender">
+                    <option value="" data-i18n="all">
+                        全部
+                    </option>
+                    <option value="M" data-i18n="male">
+                        男性
+                    </option>
+                    <option value="F" data-i18n="female">
+                        女性
+                    </option>
+                </select>
+
+                <label for="minAge" data-i18n="minAge">
+                    最小年齡
+                </label>
+                <input id="minAge" type="number" min="0" max="130">
+
+                <label for="maxAge" data-i18n="maxAge">
+                    最大年齡
+                </label>
+                <input id="maxAge" type="number" min="0" max="130">
+
+                <button type="submit" data-i18n="search">
+                    查詢病人
+                </button>
+            </form>
+        </section>
+
+        <section>
+            <h2 data-i18n="patientList">病人清單</h2>
+
+            <p id="resultCount"></p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th data-i18n="name">姓名</th>
+                        <th data-i18n="gender">性別</th>
+                        <th data-i18n="age">年齡</th>
+                        <th data-i18n="city">城市</th>
+                        <th data-i18n="action">操作</th>
+                    </tr>
+                </thead>
+
+                <tbody id="patientTableBody">
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <h2 data-i18n="statistics">病人統計分析</h2>
+            <p data-i18n="genderChart">病人性別分布</p>
+
+            <div class="chart-container">
+                <div class="chart-row">
+                    <span id="maleLabel">男性</span>
+                    <div class="chart-track">
+                        <div id="maleBar" class="chart-bar male-bar"></div>
+                    </div>
+                    <span id="maleCount">0</span>
+                </div>
+
+                <div class="chart-row">
+                    <span id="femaleLabel">女性</span>
+                    <div class="chart-track">
+                        <div id="femaleBar" class="chart-bar female-bar"></div>
+                    </div>
+                    <span id="femaleCount">0</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- B3：檢驗與觀察紀錄 -->
+        <section>
+            <h2 data-i18n="observationsTitle">
+                檢驗與觀察紀錄
+            </h2>
+
+            <p id="observationCount"></p>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th data-i18n="date">日期</th>
+                            <th data-i18n="observationName">項目</th>
+                            <th data-i18n="value">數值</th>
+                            <th data-i18n="unit">單位</th>
+                        </tr>
+                    </thead>
+                    <tbody id="observationTableBody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- B3：用藥紀錄 -->
+        <section>
+            <h2 data-i18n="medicationsTitle">
+                用藥紀錄
+            </h2>
+
+            <p id="medicationCount"></p>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th data-i18n="startDate">開始日期</th>
+                            <th data-i18n="endDate">結束日期</th>
+                            <th data-i18n="medicationName">藥品名稱</th>
+                            <th data-i18n="dispenses">領藥次數</th>
+                        </tr>
+                    </thead>
+                    <tbody id="medicationTableBody"></tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>
