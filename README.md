@@ -174,23 +174,38 @@ http://127.0.0.1:8000/docs
 - `GET /api/patients?min_age=20&max_age=40`：依年齡篩選
 - `GET /api/patients/{patient_id}`：查詢病人詳細資料
 
-## 8. 啟動前端網站
+## 8. 啟動前端網站 / Start Frontend
 
-保持後端 API 執行中。另開一個 PowerShell 視窗，從本專案根目錄執行以下指令。
+請先依照第 7 節啟動 FastAPI 後端，並保持執行。
+
+### 方法一：使用 Python（推薦）
+
+開啟第二個 PowerShell 終端機，在專案根目錄執行：
 
 ```powershell
 cd frontend
 py -m http.server 5500 --bind 127.0.0.1
 ```
 
-在瀏覽器開啟 [http://127.0.0.1:5500/index.html](http://127.0.0.1:5500/index.html)。
+接著使用瀏覽器開啟：
 
-也可以用 VS Code Live Server 開啟 `frontend/index.html`。請使用 `127.0.0.1:5500` 或 `localhost:5500`，頁面路徑依 Live Server 的工作區根目錄而定。
+http://127.0.0.1:5500/index.html
+
+### 方法二：使用 VS Code Live Server
+
+1. 在 VS Code 安裝 Live Server 擴充套件。
+2. 開啟 `frontend/index.html`。
+3. 按右鍵，選擇 `Open with Live Server`。
+4. 瀏覽器會自動開啟網站。
+
+請使用 `127.0.0.1:5500` 或 `localhost:5500`。頁面路徑依 Live Server 的工作區根目錄而定。
+
+### 網站功能 / Features
 
 進入首頁後可以：
 
 1. 查詢合成病人清單。
-2. 依性別及年齡篩選。
+2. 依姓名、性別、城市及年齡篩選。
 3. 查看性別統計圖表。
 4. 開啟病人詳細資料。
 5. 查看就診、診斷、觀察與用藥紀錄。

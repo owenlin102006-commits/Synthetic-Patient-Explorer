@@ -8,11 +8,11 @@
 
     <title>病人詳細資料 | Synthetic Patient Explorer</title>
 
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=detail-nav-center">
 </head>
 
 <body>
-    <header>
+    <header class="site-header">
         <h1 data-i18n="detailTitle">病人詳細資料</h1>
         <p>Synthetic Patient Explorer</p>
 
@@ -20,6 +20,17 @@
             English
         </button>
     </header>
+
+    <details id="detailNav" class="detail-nav">
+        <summary><span data-i18n="sectionNav">目錄</span></summary>
+        <nav aria-labelledby="detailNavTitle">
+            <span id="detailNavTitle" hidden data-i18n="sectionNav">目錄</span>
+            <a href="#basic-info" data-i18n="basicInfo">基本資料</a>
+            <a href="#encounter-history" data-i18n="encounterHistory">就診時間軸</a>
+            <a href="#observations" data-i18n="observationsTitle">檢驗與觀察紀錄</a>
+            <a href="#medications" data-i18n="medicationsTitle">用藥紀錄</a>
+        </nav>
+    </details>
 
     <main>
         <section>
@@ -29,7 +40,7 @@
             </a>
         </section>
 
-        <section>
+        <section id="basic-info" class="detail-section" tabindex="-1">
             <h2 data-i18n="basicInfo">基本資料</h2>
 
             <div id="patientInfo">
@@ -37,20 +48,37 @@
             </div>
         </section>
 
-        <section>
+        <section id="encounter-history" class="detail-section" tabindex="-1">
             <h2 data-i18n="encounterHistory">
                 就診時間軸
             </h2>
 
-            <p id="encounterCount"></p>
+            <div class="encounter-controls">
+                <label for="encounterSort">
+                    <span data-i18n="encounterSort">日期排序</span>
+                    <select id="encounterSort" disabled>
+                        <option value="newest" data-i18n="newestFirst">由新到舊</option>
+                        <option value="oldest" data-i18n="oldestFirst">由舊到新</option>
+                    </select>
+                </label>
+
+                <label for="encounterType">
+                    <span data-i18n="encounterType">就診類型</span>
+                    <select id="encounterType" disabled>
+                        <option value="" data-i18n="allEncounterTypes">全部類型</option>
+                    </select>
+                </label>
+            </div>
+
+            <p id="encounterCount" aria-live="polite"></p>
 
             <div id="encounterTimeline">
                 正在載入就診紀錄...
             </div>
         </section>
 
-        <section>
-            <h2 data-i18n="observations">
+        <section id="observations" class="detail-section" tabindex="-1">
+            <h2 data-i18n="observationsTitle">
                 檢驗與觀察紀錄
             </h2>
 
@@ -61,9 +89,9 @@
                     <thead>
                         <tr>
                             <th data-i18n="date">日期</th>
-                            <th data-i18n="description">描述</th>
+                            <th data-i18n="observationName">項目</th>
                             <th data-i18n="value">數值</th>
-                            <th data-i18n="units">單位</th>
+                            <th data-i18n="unit">單位</th>
                         </tr>
                     </thead>
                     <tbody id="observationTableBody">
@@ -72,8 +100,8 @@
             </div>
         </section>
 
-        <section>
-            <h2 data-i18n="medications">
+        <section id="medications" class="detail-section" tabindex="-1">
+            <h2 data-i18n="medicationsTitle">
                 用藥紀錄
             </h2>
 
@@ -84,9 +112,9 @@
                     <thead>
                         <tr>
                             <th data-i18n="startDate">開始日期</th>
-                            <th data-i18n="stopDate">結束日期</th>
-                            <th data-i18n="description">描述</th>
-                            <th data-i18n="dispenses">處方數</th>
+                            <th data-i18n="endDate">結束日期</th>
+                            <th data-i18n="medicationName">藥品名稱</th>
+                            <th data-i18n="dispenses">領藥次數</th>
                         </tr>
                     </thead>
                     <tbody id="medicationTableBody">
@@ -97,6 +125,7 @@
     </main>
     
 
-    <script src="patient.js"></script>
+    <script src="site-header.js"></script>
+    <script src="patient.js?v=detail-nav"></script>
 </body>
 </html>

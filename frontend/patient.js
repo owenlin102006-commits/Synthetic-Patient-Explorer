@@ -6,6 +6,7 @@ const translations = {
         detailTitle: "病人詳細資料",
         back: "← 返回病人清單",
         basicInfo: "基本資料",
+        sectionNav: "目錄",
         encounterHistory: "就診時間軸",
         name: "姓名",
         gender: "性別",
@@ -18,6 +19,12 @@ const translations = {
         race: "種族",
         ethnicity: "族裔",
         encounterType: "就診類型",
+        encounterSort: "日期排序",
+        newestFirst: "由新到舊",
+        oldestFirst: "由舊到新",
+        allEncounterTypes: "全部類型",
+        filteredEncounterCount: "顯示 {shown} 筆，共 {count} 筆就診紀錄",
+        noMatchingEncounters: "沒有符合此類型的就診紀錄",
         diagnosis: "相關診斷",
         noDiagnosis: "本次就診無關聯診斷紀錄",
         encounterCount: "共 {count} 筆就診紀錄",
@@ -30,6 +37,7 @@ const translations = {
         medicationsTitle: "用藥紀錄",
         date: "日期",
         observationName: "項目",
+        description: "描述",
         value: "數值",
         unit: "單位",
         startDate: "開始日期",
@@ -46,6 +54,7 @@ const translations = {
         detailTitle: "Patient Details",
         back: "← Back to Patient List",
         basicInfo: "Basic Information",
+        sectionNav: "Contents",
         encounterHistory: "Encounter Timeline",
         name: "Name",
         gender: "Gender",
@@ -58,6 +67,12 @@ const translations = {
         race: "Race",
         ethnicity: "Ethnicity",
         encounterType: "Encounter Type",
+        encounterSort: "Date Order",
+        newestFirst: "Newest First",
+        oldestFirst: "Oldest First",
+        allEncounterTypes: "All Types",
+        filteredEncounterCount: "Showing {shown} of {count} encounter records",
+        noMatchingEncounters: "No encounters match this type",
         diagnosis: "Related Diagnoses",
         noDiagnosis: "No diagnoses linked to this encounter",
         encounterCount: "{count} encounter records",
@@ -70,6 +85,7 @@ const translations = {
         medicationsTitle: "Medication Records",
         date: "Date",
         observationName: "Observation",
+        description: "Description",
         value: "Value",
         unit: "Unit",
         startDate: "Start Date",
@@ -89,6 +105,21 @@ let currentLanguage =
 
 let patientData = null;
 let errorKey = "";
+
+const encounterSort = document.getElementById("encounterSort");
+const encounterType = document.getElementById("encounterType");
+const encounterTypeLabels = {
+    ambulatory: ["門診照護", "Ambulatory"],
+    wellness: ["健康檢查", "Wellness"],
+    outpatient: ["門診就診", "Outpatient"],
+    emergency: ["急診", "Emergency"],
+    urgentcare: ["緊急照護", "Urgent Care"],
+    inpatient: ["住院", "Inpatient"],
+    hospice: ["安寧照護", "Hospice"],
+    virtual: ["遠距看診", "Virtual"],
+    snf: ["專業護理機構", "Skilled Nursing Facility"],
+    home: ["居家照護", "Home"]
+};
 
 function t(key) {
     return translations[currentLanguage][key] || key;
@@ -152,6 +183,25 @@ function renderPatientInfo() {
     container.appendChild(grid);
 }
 
+function encounterTypeLabel(type) {
+    if (!type) return t("unknown");
+    if (!Object.hasOwn(encounterTypeLabels, type)) return type;
+    return encounterTypeLabels[type][currentLanguage === "en" ? 1 : 0];
+}
+
+function updateEncounterControls() {
+    const encounters = patientData?.encounters || [];
+    const selectedType = encounterType.value;
+    const types = new Set(encounters.map(encounter => encounter.encounter_class).filter(Boolean));
+    const options = [...types].map(value => new Option(encounterTypeLabel(value), value));
+    options.sort((a, b) => a.text.localeCompare(b.text, document.documentElement.lang));
+
+    encounterType.replaceChildren(new Option(t("allEncounterTypes"), ""), ...options);
+    encounterType.value = types.has(selectedType) ? selectedType : "";
+    encounterType.disabled = types.size === 0;
+    encounterSort.disabled = encounters.length === 0;
+}
+
 function renderEncounters() {
     const timeline = document.getElementById("encounterTimeline");
     const count = document.getElementById("encounterCount");
@@ -163,15 +213,27 @@ function renderEncounters() {
         return;
     }
 
-    const encounters = patientData.encounters || [];
-
-    count.textContent = t("encounterCount").replace(
-        "{count}",
-        encounters.length
+    const allEncounters = patientData.encounters || [];
+    const selectedType = encounterType.value;
+    const encounters = allEncounters.filter(encounter =>
+        !selectedType || encounter.encounter_class === selectedType
     );
+    const direction = encounterSort.value === "oldest" ? 1 : -1;
+    encounters.sort((a, b) => {
+        const aTime = Date.parse(a.start);
+        const bTime = Date.parse(b.start);
+
+        if (Number.isNaN(aTime)) return Number.isNaN(bTime) ? 0 : 1;
+        if (Number.isNaN(bTime)) return -1;
+        return direction * (aTime - bTime);
+    });
+
+    count.textContent = t(selectedType ? "filteredEncounterCount" : "encounterCount")
+        .replace("{count}", allEncounters.length)
+        .replace("{shown}", encounters.length);
 
     if (encounters.length === 0) {
-        timeline.textContent = t("noEncounters");
+        timeline.textContent = t(selectedType ? "noMatchingEncounters" : "noEncounters");
         return;
     }
 
@@ -184,7 +246,7 @@ function renderEncounters() {
 
         const type = document.createElement("p");
         type.textContent =
-            `${t("encounterType")}：${encounter.encounter_class || t("unknown")}`;
+            `${t("encounterType")}：${encounterTypeLabel(encounter.encounter_class)}`;
 
         const description = document.createElement("p");
         description.textContent =
@@ -329,13 +391,21 @@ function updateLanguage() {
         currentLanguage === "zh" ? "zh-Hant" : "en";
 
     document.querySelectorAll("[data-i18n]").forEach(element => {
-        element.textContent = t(element.dataset.i18n);
+        const key = element.dataset.i18n;
+        // 舊版詳細頁使用的表頭鍵名。
+        const translationKey = key === "units" ? "unit" :
+            key === "stopDate" ? "endDate" : key;
+        const labels = translations[currentLanguage];
+        if (Object.hasOwn(labels, translationKey)) {
+            element.textContent = labels[translationKey];
+        }
     });
 
     document.getElementById("languageBtn").textContent =
         currentLanguage === "zh" ? "English" : "中文";
 
     renderPatientInfo();
+    updateEncounterControls();
     renderEncounters();
     renderObservations();
     renderMedications();
@@ -387,6 +457,33 @@ document.getElementById("languageBtn").addEventListener(
         updateLanguage();
     }
 );
+
+encounterSort.addEventListener("change", renderEncounters);
+encounterType.addEventListener("change", renderEncounters);
+
+const detailNav = document.getElementById("detailNav");
+const detailNavSummary = detailNav.querySelector("summary");
+
+detailNav.addEventListener("pointerenter", event => {
+    if (event.pointerType === "mouse") detailNav.open = true;
+});
+detailNav.addEventListener("pointerleave", event => {
+    if (event.pointerType === "mouse" && !detailNav.contains(document.activeElement)) {
+        detailNav.open = false;
+    }
+});
+detailNav.addEventListener("keydown", event => {
+    if (event.key === "Escape" && detailNav.open) {
+        event.preventDefault();
+        detailNav.open = false;
+        detailNavSummary.focus({ preventScroll: true });
+    }
+});
+detailNav.querySelectorAll("a").forEach(link => {
+    link.addEventListener("click", () => {
+        detailNav.open = false;
+    });
+});
 
 updateLanguage();
 loadPatient();

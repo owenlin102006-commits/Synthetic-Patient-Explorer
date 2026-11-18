@@ -31,11 +31,27 @@ def home():
     }
 
 
+@app.get("/api/cities")
+def get_cities():
+    conn = get_connection()
+    try:
+        rows = conn.execute("""
+            SELECT DISTINCT city
+            FROM patients
+            WHERE city IS NOT NULL AND TRIM(city) <> ''
+            ORDER BY city
+        """).fetchall()
+        return [city for (city,) in rows]
+    finally:
+        conn.close()
+
+
 @app.get("/api/patients")
 def get_patients(
     gender: Literal["M", "F"] | None = None,
     min_age: int | None = Query(default=None, ge=0, le=130),
     max_age: int | None = Query(default=None, ge=0, le=130),
+    city: str | None = None,
 ):
     if (
         min_age is not None
@@ -62,8 +78,9 @@ def get_patients(
                 city,
                 state
             FROM patients
+            WHERE (? IS NULL OR city = ?)
             ORDER BY last_name, first_name
-        """).fetchall()
+        """, (city or None, city)).fetchall()
 
         today = date.today()
         patients = []

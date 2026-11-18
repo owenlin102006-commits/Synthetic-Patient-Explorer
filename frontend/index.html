@@ -7,11 +7,11 @@
 
     <title>Synthetic Patient Explorer</title>
 
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=patient-search">
 </head>
 
 <body>
-    <header>
+    <header class="site-header">
         <h1 data-i18n="title">合成病人資料查詢系統</h1>
         <p data-i18n="subtitle">Synthetic Patient Explorer</p>
 
@@ -25,6 +25,11 @@
             <h2 data-i18n="filters">病人篩選</h2>
 
             <form id="filterForm">
+                <div class="name-filter">
+                    <label for="patientName" data-i18n="optionalName">姓名（選填）</label>
+                    <input id="patientName" type="search">
+                </div>
+
                 <label for="gender" data-i18n="gender">
                     性別
                 </label>
@@ -39,6 +44,11 @@
                     <option value="F" data-i18n="female">
                         女性
                     </option>
+                </select>
+
+                <label for="city" data-i18n="city">城市</label>
+                <select id="city">
+                    <option value="" data-i18n="allCities">全部城市</option>
                 </select>
 
                 <label for="minAge" data-i18n="minAge">
@@ -149,6 +159,7 @@
 
     </main>
 
-    <script src="app.js"></script>
+    <script src="site-header.js"></script>
+    <script src="app.js?v=patient-search"></script>
 </body>
 </html>

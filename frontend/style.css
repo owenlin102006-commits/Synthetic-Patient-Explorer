@@ -21,6 +21,30 @@ header {
     border-bottom: 1px solid #e2e8f0;
 }
 
+.site-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.site-header.is-compact {
+    padding-block: 8px;
+    min-height: 56px;
+}
+
+.site-header.is-compact h1 {
+    font-size: 20px;
+}
+
+.site-header.is-compact p {
+    display: none;
+}
+
+.site-header.is-compact #languageBtn {
+    top: 50%;
+    transform: translateY(-50%);
+}
+
 header h1 {
     margin: 0;
     color: #1769aa;
@@ -77,6 +101,14 @@ section h2 {
     align-items: center;
     flex-wrap: wrap;
     gap: 12px;
+}
+
+.name-filter {
+    display: flex;
+    flex-basis: 100%;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px 12px;
 }
 
 label {
@@ -200,6 +232,96 @@ td a:hover {
 }
 
 /* 病人詳細資料 */
+.detail-section {
+    scroll-margin-top: 6rem;
+}
+
+.detail-nav {
+    position: fixed;
+    top: 50%;
+    right: 0;
+    z-index: 11;
+    width: 44px;
+    transform: translateY(-50%);
+    background: #fff;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px 0 0 10px;
+    filter: drop-shadow(0 3px 6px rgba(36, 50, 71, 0.12));
+}
+
+.detail-nav[open] {
+    border-radius: 0;
+    border-left-color: transparent;
+}
+
+.detail-nav summary {
+    display: grid;
+    place-items: center;
+    height: min(188px, 85dvh);
+    padding: 0;
+    list-style: none;
+    color: #1769aa;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    cursor: pointer;
+}
+
+.detail-nav summary span {
+    writing-mode: vertical-rl;
+    line-height: 1;
+}
+
+.detail-nav summary::-webkit-details-marker {
+    display: none;
+}
+
+.detail-nav summary:focus-visible {
+    outline-offset: -4px;
+}
+
+.detail-nav nav {
+    display: none;
+    position: absolute;
+    top: -1px;
+    bottom: -1px;
+    right: 100%;
+    width: max-content;
+    max-width: calc(100vw - 56px);
+    overflow-y: auto;
+    padding: 6px;
+    background: #fff;
+    border: 1px solid #cbd5e1;
+    border-right: 0;
+    border-radius: 10px 0 0 10px;
+}
+
+.detail-nav[open] nav {
+    display: grid;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .detail-nav[open] nav {
+        animation: detail-nav-extend 180ms ease-out;
+    }
+
+    @keyframes detail-nav-extend {
+        from { clip-path: inset(0 0 0 100%); }
+        to { clip-path: inset(0); }
+    }
+}
+
+.detail-nav a {
+    padding: 8px 12px;
+    color: #1769aa;
+    text-decoration: none;
+    border-radius: 6px;
+}
+
+.detail-nav a:hover,
+.detail-nav a:focus-visible {
+    background: #eaf4fc;
+}
+
 #backLink {
     color: #1769aa;
     text-decoration: none;
@@ -229,6 +351,24 @@ td a:hover {
 .info-item strong {
     color: #64748b;
     font-size: 13px;
+}
+
+.encounter-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.encounter-controls label {
+    display: grid;
+    gap: 4px;
+    flex: 0 1 200px;
+    min-width: 0;
+}
+
+.encounter-controls select {
+    width: 100%;
+    min-width: 0;
 }
 
 .encounter-card {

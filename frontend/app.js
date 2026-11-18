@@ -1,5 +1,5 @@
 
-const API_URL = "http://127.0.0.1:8000/api/patients";
+const API_URL = "http://127.0.0.1:8000/api";
 
 // 中英文翻譯字典
 const translations = {
@@ -16,8 +16,10 @@ const translations = {
         search: "查詢病人",
         patientList: "病人清單",
         name: "姓名",
+        optionalName: "姓名（選填）",
         age: "年齡",
         city: "城市",
+        allCities: "全部城市",
         action: "操作",
         details: "查看詳細資料",
         result: "查詢結果：{count} 位病人",
@@ -26,7 +28,17 @@ const translations = {
         error: "無法取得資料，請確認 FastAPI 已啟動",
         invalidAge: "最小年齡不能大於最大年齡",
         statistics: "病人統計分析",
-        genderChart: "病人性別分布"
+        genderChart: "病人性別分布",
+        observationsTitle: "檢驗與觀察紀錄",
+        medicationsTitle: "用藥紀錄",
+        date: "日期",
+        observationName: "項目",
+        value: "數值",
+        unit: "單位",
+        startDate: "開始日期",
+        endDate: "結束日期",
+        medicationName: "藥品名稱",
+        dispenses: "領藥次數"
     },
     en: {
         title: "Synthetic Patient Explorer",
@@ -41,8 +53,10 @@ const translations = {
         search: "Search Patients",
         patientList: "Patient List",
         name: "Name",
+        optionalName: "Name (optional)",
         age: "Age",
         city: "City",
+        allCities: "All Cities",
         action: "Action",
         details: "View Details",
         result: "Results: {count} patients",
@@ -51,7 +65,17 @@ const translations = {
         error: "Unable to load data. Check that FastAPI is running.",
         invalidAge: "Minimum age cannot exceed maximum age",
         statistics: "Patient Statistics",
-        genderChart: "Gender Distribution"
+        genderChart: "Gender Distribution",
+        observationsTitle: "Laboratory & Observation Records",
+        medicationsTitle: "Medication Records",
+        date: "Date",
+        observationName: "Observation",
+        value: "Value",
+        unit: "Unit",
+        startDate: "Start Date",
+        endDate: "End Date",
+        medicationName: "Medication",
+        dispenses: "Dispenses"
     }
 };
 
@@ -123,6 +147,10 @@ function renderGenderChart() {
 }
 
 // 將病人資料顯示在表格中
+function patientName(patient) {
+    return `${patient.first_name || ""} ${patient.last_name || ""}`.trim();
+}
+
 function renderPatients() {
     renderGenderChart();
     const tbody = document.getElementById("patientTableBody");
@@ -161,8 +189,7 @@ function renderPatients() {
         const row = document.createElement("tr");
 
         const name = document.createElement("td");
-        name.textContent =
-            `${patient.first_name || ""} ${patient.last_name || ""}`.trim();
+        name.textContent = patientName(patient);
 
         const gender = document.createElement("td");
         gender.textContent =
@@ -189,9 +216,34 @@ function renderPatients() {
     });
 }
 
+async function fetchCities() {
+    try {
+        const response = await fetch(`${API_URL}/cities`);
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+
+        const cities = await response.json();
+        const citySelect = document.getElementById("city");
+
+        for (const city of cities) {
+            const option = document.createElement("option");
+            option.value = city;
+            option.textContent = city;
+            citySelect.appendChild(option);
+        }
+    } catch (error) {
+        console.error("City API Error:", error);
+    }
+}
+
 // 從 FastAPI 查詢病人
 async function fetchPatients() {
+    const name = document.getElementById("patientName").value
+        .trim().replace(/\s+/g, " ").toLowerCase();
     const gender = document.getElementById("gender").value;
+    const city = document.getElementById("city").value;
     const minAge = document.getElementById("minAge").value;
     const maxAge = document.getElementById("maxAge").value;
 
@@ -207,6 +259,7 @@ async function fetchPatients() {
     const params = new URLSearchParams();
 
     if (gender) params.set("gender", gender);
+    if (city) params.set("city", city);
     if (minAge !== "") params.set("min_age", minAge);
     if (maxAge !== "") params.set("max_age", maxAge);
 
@@ -216,7 +269,7 @@ async function fetchPatients() {
 
     try {
         const response = await fetch(
-            `${API_URL}?${params.toString()}`
+            `${API_URL}/patients?${params.toString()}`
         );
 
         if (!response.ok) {
@@ -225,7 +278,11 @@ async function fetchPatients() {
 
         const data = await response.json();
 
-        currentPatients = data.patients;
+        currentPatients = name
+            ? data.patients.filter(patient =>
+                patientName(patient).replace(/\s+/g, " ").toLowerCase().includes(name)
+            )
+            : data.patients;
     } catch (error) {
         console.error("API Error:", error);
         currentPatients = [];
@@ -259,4 +316,5 @@ document.getElementById("languageBtn").addEventListener(
 
 // 初次載入網頁
 updateLanguage();
+fetchCities();
 fetchPatients();
