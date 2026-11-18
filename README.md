@@ -94,73 +94,26 @@ py -m pip install -r backend/requirements.txt
 
 ## 5. 產生 Synthea 合成資料
 
-Synthea 專案：
+從 [Synthea 官方儲存庫](https://github.com/synthetichealth/synthea) 下載或複製原始碼。在 Windows PowerShell 中切換到 Synthea 專案根目錄（包含 `gradlew.bat` 的資料夾）。
 
-https://github.com/synthetichealth/synthea
-
-本次資料生成設定：
-
-| 參數           | 數值           |
-| -------------- | -------------- |
-| Population     | 100            |
-| Seed           | 2026           |
-| Reference Date | 2026-11-01     |
-| Output         | CSV, FHIR JSON |
-
-請先在 Synthea 專案中確認 CSV 與 FHIR 輸出已啟用。
-
-使用 Synthea 的 Gradle 啟動方式產生資料，並設定相同的 population、seed 與 reference date。
-
-產生後，將以下 CSV 複製到本專案 `data/raw/`：
-
-- patients.csv
-- encounters.csv
-- conditions.csv
-- observations.csv
-- medications.csv
-
-將 FHIR JSON 檔案複製到 `data/fhir/`。
-
-注意：population 參數不一定等於最終 patients.csv 的列數。本次生成結果包含 140 位病人。
-
-
-### 執行 Synthea / Run Synthea
-
-先下載 Synthea：
-
-https://github.com/synthetichealth/synthea
-
-在 Windows PowerShell 中進入 Synthea 專案資料夾：
-
-```powershell
-cd "C:\Users\USER\Projects\synthea"
-```
-
-確認 `src/main/resources/synthea.properties` 包含：
+在 `src/main/resources/synthea.properties` 中啟用 CSV 與 FHIR JSON 輸出。
 
 ```properties
 exporter.csv.export = true
 exporter.fhir.export = true
 ```
 
-執行合成資料生成：
+在 Synthea 專案根目錄執行以下指令。
 
 ```powershell
 .\gradlew.bat run --args="-p 100 -s 2026 -r 20261101"
 ```
 
-參數說明：
+- `-p 100` 設定人口規模。
+- `-s 2026` 設定隨機種子。
+- `-r 20261101` 設定參考日期為 2026-11-01。
 
-- `-p 100`：設定人口數量為 100
-- `-s 2026`：設定隨機種子
-- `-r 20261101`：設定參考日期為 2026-11-01
-
-生成完成後，資料通常位於：
-
-- `synthea/output/csv/`
-- `synthea/output/fhir/`
-
-將以下 CSV 複製到 `Synthetic-Patient-Explorer/data/raw/`：
+從 Synthea 的 `output/csv/` 將下列檔案複製到本專案根目錄下的 `data/raw/`。
 
 - `patients.csv`
 - `encounters.csv`
@@ -168,14 +121,9 @@ exporter.fhir.export = true
 - `observations.csv`
 - `medications.csv`
 
-將 FHIR JSON 複製到 `Synthetic-Patient-Explorer/data/fhir/`。
+將同一次生成的 FHIR JSON 檔案從 Synthea 的 `output/fhir/` 複製到本專案根目錄下的 `data/fhir/`。若目的資料夾尚未存在，請先建立。
 
-注意：本專題的驗證資料來自同一次生成結果。
-不同 Synthea 版本或設定可能產生不同筆數。
-
-```
-
-```
+`-p` 設定的人口規模可能與 `patients.csv` 的實際資料筆數不同。本次生成與驗證使用同一批資料，共有 140 位病人。即使使用相同的 seed，不同 Synthea 版本或設定也可能產生不同筆數。現有紀錄未註明本次使用的 Synthea 版本或 Git commit。
 
 ## 6. 建立與匯入 SQLite
 
@@ -205,7 +153,7 @@ py scripts/import_data.py
 | medications     |             7,876 |
 | **Total** | **133,800** |
 
-匯入程式會執行 SQLite 外鍵檢查，並使用交易機制避免部分匯入失敗造成資料不一致。
+匯入程式會啟用 SQLite 外鍵約束，在同一筆交易內先依子表到父表的順序清除這五張表的舊資料，再依上述順序匯入 CSV。提交前執行 `PRAGMA foreign_key_check`，檢查資料庫結構中已宣告的外鍵。若匯入或檢查失敗，程式會回滾這筆交易。程式會輸出各表的 SQLite 筆數。FHIR 與 SQLite 的病人 ID 集合比對請見第 9 節。
 
 ## 7. 啟動後端 API
 
@@ -228,11 +176,16 @@ http://127.0.0.1:8000/docs
 
 ## 8. 啟動前端網站
 
-保持後端 API 執行中。
+保持後端 API 執行中。另開一個 PowerShell 視窗，從本專案根目錄執行以下指令。
 
-使用 VS Code Live Server 啟動 `frontend/index.html`，並確認網站使用：
+```powershell
+cd frontend
+py -m http.server 5500 --bind 127.0.0.1
+```
 
-http://127.0.0.1:5500
+在瀏覽器開啟 [http://127.0.0.1:5500/index.html](http://127.0.0.1:5500/index.html)。
+
+也可以用 VS Code Live Server 開啟 `frontend/index.html`。請使用 `127.0.0.1:5500` 或 `localhost:5500`，頁面路徑依 Live Server 的工作區根目錄而定。
 
 進入首頁後可以：
 
@@ -283,7 +236,7 @@ Exact match: True
 - [X] A1: Import synthetic patient data
 - [X] A2: Patient list and filters
 - [X] A3: Patient details and encounter timeline
-- [X] B2: Additional filters and visualization
+- [X] B2: Age range filter and gender distribution chart
 - [X] B3: Observations and medications
 - [X] B4: FHIR / SQLite patient ID comparison
 - [X] Bilingual interface
